@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net9.0;netstandard2.1</TargetFrameworks>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <PackageId>Neptune.Packets</PackageId>
+        <Version>0.1.0</Version>
+        <Authors>Neptune Protocol Team</Authors>
+        <Company>Neptune Protocol</Company>
+        <Description>Core packet definitions for the Neptune Protocol</Description>
+        <PackageTags>neptune;messaging;protocol</PackageTags>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="System.Text.Json" Version="9.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Neptune.Core\Neptune.Core.csproj" />
+    </ItemGroup>
+
+</Project>
