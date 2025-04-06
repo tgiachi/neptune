@@ -1,0 +1,6 @@
+@Neptune.Rest.Server_HostAddress = http://localhost:5181
+
+GET {{Neptune.Rest.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

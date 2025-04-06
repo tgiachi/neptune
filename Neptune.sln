@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neptune.Core", "src\Neptune
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neptune.Tests", "tests\Neptune.Tests\Neptune.Tests.csproj", "{9648270F-A53F-4354-8A6B-1D878DE8E298}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neptune.Rest.Server", "src\Neptune.Rest.Server\Neptune.Rest.Server.csproj", "{176F6410-C48D-41B6-B038-804D4D4BA46B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{9648270F-A53F-4354-8A6B-1D878DE8E298}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9648270F-A53F-4354-8A6B-1D878DE8E298}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9648270F-A53F-4354-8A6B-1D878DE8E298}.Release|Any CPU.Build.0 = Release|Any CPU
+		{176F6410-C48D-41B6-B038-804D4D4BA46B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{176F6410-C48D-41B6-B038-804D4D4BA46B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{176F6410-C48D-41B6-B038-804D4D4BA46B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{176F6410-C48D-41B6-B038-804D4D4BA46B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
