@@ -48,7 +48,7 @@ public static class RegisterDatabaseExtension
         Func<IServiceProvider, IFreeSql> fsqlFactory = r =>
         {
             var fsqlBuilder = new FreeSql.FreeSqlBuilder()
-                .UseConnectionString(dataSourceObject.DatabaseType.ToDataType(), dataSourceObject.ToString())
+                .UseConnectionString(dataSourceObject.DatabaseType.ToDataType(), dataSourceObject.ToStandardConnectionString())
                 .UseAutoSyncStructure(true);
 
 

@@ -1,3 +1,3 @@
 namespace Neptune.Server.Core.Data.Services;
 
-public record ServiceToLoadData(Type serviceType);
+public record ServiceToLoadData(Type ServiceType);

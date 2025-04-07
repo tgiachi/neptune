@@ -5,6 +5,7 @@ using Neptune.Database.Core.Extensions;
 using Neptune.Database.Core.Interfaces.Services;
 using Neptune.Rest.Server.Data.Options;
 using Neptune.Rest.Server.Entities;
+using Neptune.Rest.Server.Hosted;
 using Neptune.Server.Core.Data.Config;
 using Neptune.Server.Core.Data.Directories;
 using Neptune.Server.Core.Extensions;
@@ -94,6 +95,8 @@ public class Program
 
 
         builder.Services.RegisterServiceToLoadAtStartup<IDatabaseService>();
+
+        builder.Services.AddHostedService<NeptuneHostedService>();
 
         var app = builder.Build();
 
