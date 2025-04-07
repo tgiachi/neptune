@@ -1,9 +1,10 @@
 using FreeSql.DataAnnotations;
+using Neptune.Database.Core.Impl.Entities;
 
 namespace Neptune.Rest.Server.Entities;
 
 [Table(Name = "route_history")]
-public class RouteHistoryEntity
+public class RouteHistoryEntity : BaseDbEntity
 {
     [Column(StringLength = 64)] public string MessageId { get; set; }
 

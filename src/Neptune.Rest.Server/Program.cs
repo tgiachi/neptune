@@ -1,7 +1,10 @@
 using CommandLine;
 using Microsoft.OpenApi.Models;
 using Neptune.Core.Extensions;
+using Neptune.Database.Core.Extensions;
+using Neptune.Database.Core.Interfaces.Services;
 using Neptune.Rest.Server.Data.Options;
+using Neptune.Rest.Server.Entities;
 using Neptune.Server.Core.Data.Config;
 using Neptune.Server.Core.Data.Directories;
 using Neptune.Server.Core.Extensions;
@@ -72,6 +75,25 @@ public class Program
         builder.Services.AddSwaggerGen(
             c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "Neptune Rest Server", Version = "v1" }); }
         );
+
+
+        builder.Services
+            .AddDbEntity<UserEntity>()
+            .AddDbEntity<ConnectionEntity>()
+            .AddDbEntity<GroupEntity>()
+            .AddDbEntity<GroupMemberEntity>()
+            .AddDbEntity<DeviceEntity>()
+            .AddDbEntity<MessageQueueEntity>()
+            .AddDbEntity<RouteHistoryEntity>();
+
+
+        builder.Services.RegisterDatabase(
+            config.Database.ConnectionString.ParseDbConnectionString(),
+            config.Database.EnableSqlLogging
+        );
+
+
+        builder.Services.RegisterServiceToLoadAtStartup<IDatabaseService>();
 
         var app = builder.Build();
 
