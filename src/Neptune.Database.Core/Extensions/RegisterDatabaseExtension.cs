@@ -6,6 +6,7 @@ using Neptune.Database.Core.Interfaces.DataAccess;
 using Neptune.Database.Core.Interfaces.Entities;
 using Neptune.Database.Core.Interfaces.Services;
 using Neptune.Database.Core.Types;
+using Serilog;
 
 namespace Neptune.Database.Core.Extensions;
 
@@ -26,10 +27,18 @@ public static class RegisterDatabaseExtension
     }
 
     public static IServiceCollection RegisterDatabase(
-        this IServiceCollection services, string connectionString, DatabaseType databaseType, bool enableLogging = false
+        this IServiceCollection services, DataSourceObject dataSourceObject, bool enableLogging = false,
+        params Type[] entityTypes
     )
     {
-        if (!_entityTypes.Any())
+        ArgumentNullException.ThrowIfNull(dataSourceObject);
+
+        foreach (var entityType in entityTypes)
+        {
+            AddDbEntity(services, entityType);
+        }
+
+        if (_entityTypes.Count == 0)
         {
             throw new InvalidOperationException("No Entity Types have been registered.");
         }
@@ -39,13 +48,13 @@ public static class RegisterDatabaseExtension
         Func<IServiceProvider, IFreeSql> fsqlFactory = r =>
         {
             var fsqlBuilder = new FreeSql.FreeSqlBuilder()
-                .UseConnectionString(databaseType.ToDataType(), connectionString)
+                .UseConnectionString(dataSourceObject.DatabaseType.ToDataType(), dataSourceObject.ToString())
                 .UseAutoSyncStructure(true);
 
 
             if (enableLogging)
             {
-                fsqlBuilder.UseMonitorCommand(cmd => Console.Write(cmd.CommandText));
+                fsqlBuilder.UseMonitorCommand(cmd => Log.Logger.Debug(cmd.CommandText));
             }
 
             return fsqlBuilder.Build();
