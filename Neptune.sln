@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neptune.Rest.Server", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neptune.Database.Core", "src\Neptune.Database.Core\Neptune.Database.Core.csproj", "{56273B03-3F15-414D-A526-E4FBB4E259AD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neptune.Server.Core", "src\Neptune.Server.Core\Neptune.Server.Core.csproj", "{80A472D6-2863-4760-9CBD-BB50D97CABFB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{56273B03-3F15-414D-A526-E4FBB4E259AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56273B03-3F15-414D-A526-E4FBB4E259AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56273B03-3F15-414D-A526-E4FBB4E259AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80A472D6-2863-4760-9CBD-BB50D97CABFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80A472D6-2863-4760-9CBD-BB50D97CABFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80A472D6-2863-4760-9CBD-BB50D97CABFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80A472D6-2863-4760-9CBD-BB50D97CABFB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
