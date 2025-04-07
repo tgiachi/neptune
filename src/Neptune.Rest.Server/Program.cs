@@ -26,7 +26,7 @@ public class Program
 
         if (string.IsNullOrEmpty(options.Value.RootDirectory))
         {
-            options.Value.RootDirectory = Path.Combine(Directory.GetCurrentDirectory(), "neptuneserver");
+            options.Value.RootDirectory = Path.Combine(Directory.GetCurrentDirectory(), "neptune_server");
         }
 
         if (options.Errors.Any())

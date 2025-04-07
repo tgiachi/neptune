@@ -1,3 +1,0 @@
-database:
-  connection_string: postgres://postgres:postgres@localhost:5432/neptune_db
-log_level: Information

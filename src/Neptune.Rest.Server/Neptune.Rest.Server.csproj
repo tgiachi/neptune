@@ -31,4 +31,12 @@
       <ProjectReference Include="..\Neptune.Server.Core\Neptune.Server.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Properties\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Properties\launchSettings.json" />
+    </ItemGroup>
+
 </Project>
