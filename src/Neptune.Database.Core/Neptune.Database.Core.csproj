@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+
+        <Description>Core database library for Neptune, providing Entity, DAO and Repository patterns using FreeSql ORM</Description>
+        <Authors>Anaconda Project Team</Authors>
+        <Company>Anaconda Project</Company>
+        <Copyright>Copyright © Anaconda Project 2025</Copyright>
+        <PackageId>Neptune.Database.Core</PackageId>
+        <Version>0.0.1</Version>
+        <PackageTags>database;orm;freesql;repository;dao;entity</PackageTags>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
+
+    <ItemGroup>
+      <PackageReference Include="FreeSql" Version="3.5.201" />
+      <PackageReference Include="FreeSql.Repository" Version="3.5.201" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.3" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.3" />
+    </ItemGroup>
+
+</Project>
