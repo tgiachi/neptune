@@ -2,7 +2,7 @@
 
 ## RFC-NPT-0001: Neptune Decentralized Messaging Protocol (Draft)
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **Author:** squid@squid@stormwind.it
 **Date:** 2025-04-07
@@ -22,6 +22,7 @@ Neptune is a decentralized, delay-tolerant messaging protocol designed for secur
 - **Message**: An encrypted payload with metadata, transferred through Neptune.
 - **Beacon**: A periodic radio broadcast sent by vector nodes to announce their availability.
 - **History**: A compact string describing the route the message has taken through the network (device IDs and GPS coordinates).
+- **Channel**: A named group address in the format `#channel@domain`, which acts as a virtual recipient for group messages.
 
 ---
 
@@ -41,6 +42,7 @@ Neptune is a decentralized, delay-tolerant messaging protocol designed for secur
 - Interfaces with a local vector node over serial/Bluetooth/USB.
 - Acts as a bridge between the Neptune mesh and the Internet.
 - Registers users and serves public keys.
+- Manages channel subscriptions and fans out messages to channel members.
 
 ---
 
@@ -48,26 +50,26 @@ Neptune is a decentralized, delay-tolerant messaging protocol designed for secur
 
 Neptune messages follow a compact CBOR format for transmission and may be converted to JSON on the server side.
 
-```json
-{
-  "id": "uuid-v4",
-  "from": "squid@stormwind.it",
-  "to": "octopus@deeprelay.org",
-  "timestamp": 1712500000,
-  "payload": "base64(encrypted_payload)",
-  "signature": "base64(sender_signature)",
-  "hops": 2,
-  "maxHops": 5,
-  "history": "nodeA:43.7696,11.2558;nodeB:43.7700,11.2560"
-}
-```
+Example (JSON):
+
+    {
+      "id": "uuid-v4",
+      "from": "squid@stormwind.it",
+      "to": "#stormwind@stormwind.it",
+      "timestamp": 1712500000,
+      "payload": "base64(encrypted_payload)",
+      "signature": "base64(sender_signature)",
+      "hops": 2,
+      "maxHops": 5,
+      "history": "nodeA:43.7696,11.2558;nodeB:43.7700,11.2560"
+    }
 
 **Field Notes:**
 
 - `id`: Unique identifier (UUID).
-- `from`, `to`: Email-like user identifiers.
+- `from`, `to`: Email-like identifiers. `to` can be a user or a channel.
 - `timestamp`: Unix epoch timestamp at creation time.
-- `payload`: Encrypted content, only decryptable by the receiver.
+- `payload`: Encrypted content, only decryptable by the receiver(s).
 - `signature`: Digital signature of the sender over the payload.
 - `hops`: Number of relay points the message has traversed.
 - `maxHops`: Time-to-live limit to prevent infinite propagation.
@@ -99,6 +101,7 @@ Neptune messages follow a compact CBOR format for transmission and may be conver
 ## 6. Cryptography
 
 - Encryption: End-to-end using recipient’s public key (e.g., RSA or ECC).
+- For channels, the exit node may encrypt the message individually for each subscriber.
 - Signing: Messages are signed using the sender’s private key.
 - Public Key Retrieval: Via REST API endpoint exposed by the sender's server:
 
@@ -108,8 +111,8 @@ Neptune messages follow a compact CBOR format for transmission and may be conver
 
 ## 7. Federation
 
-- Users are registered on servers with email-like identifiers.
-- Messages destined to other servers are delivered over REST:
+- Users and channels are registered on servers with email-like identifiers.
+- Messages destined to other domains are delivered over REST:
 
       POST https://deeprelay.org/messages
 
@@ -120,7 +123,7 @@ Neptune messages follow a compact CBOR format for transmission and may be conver
 ## 8. Optimizations & Future Work
 
 - Chunked payload support for large messages.
-- Group messaging and multicast.
+- Group messaging and multicast via channels.
 - Binary compression (e.g., CBOR + Deflate).
 - Identity verification via Web of Trust.
 - Optional message expiration or geofencing metadata.

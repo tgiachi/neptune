@@ -82,6 +82,8 @@ public class Program
         builder.Services
             .AddDbEntity<MessageEntity>()
             .AddDbEntity<AuditLogEntity>()
+            .AddDbEntity<ChannelEntity>()
+            .AddDbEntity<ChannelMemberEntity>()
             .AddDbEntity<UserEntity>();
 
         builder.Services.RegisterDatabase(

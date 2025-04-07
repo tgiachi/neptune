@@ -17,6 +17,12 @@ public class MessageEntity : BaseDbEntity
     [MaxLength(420)]
     public string To { get; set; }
 
+
+    public Guid? ChannelId { get; set; }
+
+    [ForeignKey("ChannelId")]
+    public ChannelEntity? Channel { get; set; }
+
     public string Payload { get; set; } // base64 encoded encrypted payload
 
     public string Signature { get; set; } // base64 encoded digital signature
