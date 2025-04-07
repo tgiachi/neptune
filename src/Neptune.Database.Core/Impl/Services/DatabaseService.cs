@@ -28,6 +28,8 @@ public class DatabaseService : IDatabaseService
 
             _freeSql.CodeFirst.SyncStructure(entityType.EntityType);
         }
+
+        _logger.LogInformation("Database migrated and ready");
     }
 
     public async Task StopAsync()
