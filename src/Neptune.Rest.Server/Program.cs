@@ -4,7 +4,7 @@ using Neptune.Core.Extensions;
 using Neptune.Database.Core.Extensions;
 using Neptune.Database.Core.Interfaces.Services;
 using Neptune.Rest.Server.Data.Options;
-
+using Neptune.Rest.Server.Entities;
 using Neptune.Rest.Server.Hosted;
 using Neptune.Server.Core.Data.Config;
 using Neptune.Server.Core.Data.Directories;
@@ -79,6 +79,10 @@ public class Program
 
 
 
+        builder.Services
+            .AddDbEntity<MessageEntity>()
+            .AddDbEntity<AuditLogEntity>()
+            .AddDbEntity<UserEntity>();
 
         builder.Services.RegisterDatabase(
             config.Database.ConnectionString.ParseDbConnectionString(),

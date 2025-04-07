@@ -33,9 +33,5 @@
         <ProjectReference Include="..\Neptune.Server.Core\Neptune.Server.Core.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Entities\" />
-    </ItemGroup>
-
 
 </Project>
