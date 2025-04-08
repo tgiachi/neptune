@@ -10,6 +10,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Neptune.Core\Neptune.Core.csproj"/>
+        <ProjectReference Include="..\Neptune.Packets\Neptune.Packets.csproj" />
     </ItemGroup>
 
     <ItemGroup>

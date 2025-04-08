@@ -5,6 +5,8 @@ namespace Neptune.Server.Core.Data.Config;
 
 public class NeptuneServerConfig
 {
+    public string NodeId { get; set; } = Guid.NewGuid().ToString().Replace("-", "");
+
     public DatabaseSection Database { get; set; } = new();
 
     public JwtAuthConfig JwtAuth { get; set; } = new();

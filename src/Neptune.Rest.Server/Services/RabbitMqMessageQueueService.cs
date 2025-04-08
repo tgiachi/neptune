@@ -1,4 +1,7 @@
 using System.Text;
+using Neptune.Core.Extensions;
+using Neptune.Database.Core.Data.Messages;
+using Neptune.Packets.Messages;
 using Neptune.Server.Core.Data.Config;
 using Neptune.Server.Core.Data.Internal;
 using Neptune.Server.Core.Extensions;
@@ -43,6 +46,25 @@ public class RabbitMqMessageQueueService : IMessageQueueService, IDisposable
         return Task.CompletedTask;
     }
 
+    public async Task PublishAsync(NeptuneMessage message)
+    {
+        if (_channel == null)
+        {
+            throw new InvalidOperationException("Channel is not initialized.");
+        }
+
+        var queueMessage = new NeptuneQueueMessage
+        {
+            Source = _neptuneServerConfig.NodeId,
+            Message = message
+        };
+
+        var body = Encoding.UTF8.GetBytes(queueMessage.ToJson());
+
+        await _channel.BasicPublishAsync(exchange: string.Empty, routingKey: _messageQueueConnection.QueueName, body: body);
+        _logger.LogTrace("(RAW): RabbitMQ publish message: {Message}", queueMessage.ToJson());
+    }
+
 
     private async Task CheckAndCreateQueueAsync()
     {
@@ -63,13 +85,22 @@ public class RabbitMqMessageQueueService : IMessageQueueService, IDisposable
         _channel = await _connection.CreateChannelAsync();
 
         var consumer = new AsyncEventingBasicConsumer(_channel);
-        consumer.ReceivedAsync += (model, ea) =>
+        consumer.ReceivedAsync += async (model, ea) =>
         {
-            var body = ea.Body.ToArray();
-            var message = Encoding.UTF8.GetString(body);
+            var message = Encoding.UTF8.GetString(ea.Body.ToArray());
 
-            _logger.LogDebug("RabbitMQ received message: {Message}", message);
-            return Task.CompletedTask;
+            _logger.LogTrace("(RAW): RabbitMQ received message: {Message}", message);
+
+            try
+            {
+                var queueMessage = message.FromJson<NeptuneQueueMessage>();
+
+                await ParseAndDispatchMessageAsync(queueMessage);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "RabbitMQ received exception during parsing message: {Message}", message);
+            }
         };
 
         await _channel.BasicConsumeAsync(
@@ -80,6 +111,12 @@ public class RabbitMqMessageQueueService : IMessageQueueService, IDisposable
 
 
         _logger.LogInformation("RabbitMQ listening: {QueueName}", _neptuneServerConfig.MessagesQueue.ConnectionString);
+    }
+
+
+    private async Task ParseAndDispatchMessageAsync(NeptuneQueueMessage message)
+    {
+        _logger.LogInformation("Received message from source: {Source} => {Message}", message.Source, message.Message);
     }
 
     public void Dispose()
