@@ -9,14 +9,14 @@ public static class SystemRoutes
     {
         var group = endpoints.MapGroup("/system");
 
-
         group.MapGet(
                 "/info",
-                (NeptuneServerConfig serverConfig) => Results.Ok(new SystemInfoObject(serverConfig.NodeName, serverConfig.NodeId))
+                (NeptuneServerConfig serverConfig) =>
+                    Results.Ok(new SystemInfoObject(serverConfig.NodeName, serverConfig.NodeId))
             )
             .WithDescription("Get system information")
             .WithName("SystemInfo")
-            .Produces<SystemInfoObject>(StatusCodes.Status200OK)
+            .Produces<SystemInfoObject>()
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status500InternalServerError);
 

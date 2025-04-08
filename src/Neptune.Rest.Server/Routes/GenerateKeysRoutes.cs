@@ -13,7 +13,7 @@ public static class GenerateKeysRoutes
                 "",
                 () =>
                 {
-                    var keys = new NeptuneKeyPairEd25519();
+                    var keys = new NeptuneEncryptorX25519();
 
                     keys.Generate();
 

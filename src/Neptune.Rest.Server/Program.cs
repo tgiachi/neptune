@@ -212,7 +212,9 @@ public class Program
 
         apiGroup
             .MapGenerateKeysRoutes()
-            .MapSystemRoutes();
+            .MapSystemRoutes()
+            .MapMessageRoutes()
+            ;
 
         await app.RunAsync();
     }

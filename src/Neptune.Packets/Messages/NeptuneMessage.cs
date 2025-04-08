@@ -8,8 +8,8 @@ public class NeptuneMessage
     public string From { get; set; }
     public string To { get; set; }
     public long Timestamp { get; set; }
-    public string Payload { get; set; }   // base64 encoded encrypted payload
-    public string Signature { get; set; } // base64 encoded digital signature
+    public string Payload { get; set; }
+    public string Signature { get; set; }
     public int Hops { get; set; }
     public int MaxHops { get; set; }
     public string History { get; set; } // compact history string: "deviceId:lat,lon;deviceId2:lat,lon"
