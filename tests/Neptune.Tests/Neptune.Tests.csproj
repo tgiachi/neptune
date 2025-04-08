@@ -29,6 +29,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\src\Neptune.Core\Neptune.Core.csproj" />
       <ProjectReference Include="..\..\src\Neptune.Packets\Neptune.Packets.csproj" />
+      <ProjectReference Include="..\..\src\Neptune.Server.Core\Neptune.Server.Core.csproj" />
     </ItemGroup>
 
 </Project>
