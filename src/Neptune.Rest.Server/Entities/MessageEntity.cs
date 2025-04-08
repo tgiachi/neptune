@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using FreeSql.DataAnnotations;
 using Neptune.Database.Core.Impl.Entities;
 
 namespace Neptune.Rest.Server.Entities;
 
-[Table("messages")]
+[System.ComponentModel.DataAnnotations.Schema.Table("messages")]
 
 public class MessageEntity : BaseDbEntity
 {
@@ -20,8 +20,7 @@ public class MessageEntity : BaseDbEntity
 
     public Guid? ChannelId { get; set; }
 
-    [ForeignKey("ChannelId")]
-    public ChannelEntity? Channel { get; set; }
+
 
     public string Payload { get; set; } // base64 encoded encrypted payload
 

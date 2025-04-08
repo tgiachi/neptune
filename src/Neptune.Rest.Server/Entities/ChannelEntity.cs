@@ -1,10 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using FreeSql.DataAnnotations;
 using Neptune.Database.Core.Impl.Entities;
 
 namespace Neptune.Rest.Server.Entities;
 
-[Table("channels")]
+[System.ComponentModel.DataAnnotations.Schema.Table("channels")]
 public class ChannelEntity : BaseDbEntity
 {
     [MaxLength(250)] public string Name { get; set; }
@@ -17,4 +18,7 @@ public class ChannelEntity : BaseDbEntity
 
     [ForeignKey("CreatedByUserId")]
     public virtual UserEntity CreatedByUser { get; set; } = null!;
+
+    [Navigate(nameof(ChannelMemberEntity.ChannelId))]
+    public List<ChannelMemberEntity> Members { get; set; }
 }
