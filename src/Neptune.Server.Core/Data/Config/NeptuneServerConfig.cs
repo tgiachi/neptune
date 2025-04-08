@@ -7,6 +7,8 @@ public class NeptuneServerConfig
 {
     public string NodeId { get; set; } = Guid.NewGuid().ToString().Replace("-", "");
 
+    public string NodeName { get; set; } = "np1.neptune.local";
+
     public DatabaseSection Database { get; set; } = new();
 
     public JwtAuthConfig JwtAuth { get; set; } = new();
