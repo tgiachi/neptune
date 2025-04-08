@@ -7,6 +7,7 @@ using Neptune.Database.Core.Interfaces.DataAccess;
 using Neptune.Rest.Server.Entities;
 using Neptune.Rest.Server.Interfaces;
 using Neptune.Server.Core.Data.Config;
+using Neptune.Server.Core.Data.Cryptography;
 using Neptune.Server.Core.Data.Rest;
 
 namespace Neptune.Rest.Server.Services;
@@ -111,11 +112,57 @@ public class AuthService : IAuthService
         );
     }
 
-    public Task<RegisterResponseObject> RegisterAsync(RegisterRequestObject registerRequest)
+    public async Task<RegisterResponseObject> RegisterAsync(RegisterRequestObject registerRequest)
     {
+        var userEntity = new UserEntity();
+
+        userEntity.Username = registerRequest.Username;
+
+        var passwordHash = HashUtils.HashPassword(registerRequest.Password);
+        userEntity.PasswordHash = "hash:" + passwordHash.Hash + ":" + passwordHash.Salt;
 
 
-        return null;
+        userEntity.Email = registerRequest.Email;
 
+
+        var existingUser = await _userDataAccess.QuerySingleAsync(s => s.Username == registerRequest.Username);
+
+        if (existingUser != null)
+        {
+            _logger.LogWarning("Registration failed: User already exists.");
+
+            return new RegisterResponseObject()
+            {
+                IsSuccess = false,
+                Message = "User already exists."
+            };
+        }
+
+        var enc = new NeptuneEncryptorX25519();
+
+        enc.Generate();
+
+
+        var privateKey = enc.ExportPrivateKeyBase64();
+        var publicKey = enc.ExportPublicKeyBase64();
+
+        userEntity.PublicKey = publicKey;
+        userEntity.NodeHostName = _neptuneServerConfig.NodeName;
+
+        var createdUser = await _userDataAccess.InsertAsync(userEntity);
+
+
+        var login = await LoginAsync(
+            new LoginRequestObject(registerRequest.Username, registerRequest.Email, registerRequest.Password)
+        );
+
+        return new RegisterResponseObject()
+        {
+            IsSuccess = true,
+            PublicKey = publicKey,
+            PrivateKey = privateKey,
+            FullNodeId = createdUser.GetFullName(),
+            LoginResponse = login
+        };
     }
 }
