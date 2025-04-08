@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Neptune.Server.Core.Interfaces;
+using Neptune.Server.Core.Interfaces.Containers;
 
 namespace Neptune.Database.Core.Modules;
 

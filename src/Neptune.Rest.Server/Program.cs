@@ -1,4 +1,7 @@
+using System.Reflection;
 using CommandLine;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Neptune.Core.Extensions;
 using Neptune.Database.Core.Extensions;
@@ -40,6 +43,11 @@ public class Program
             return;
         }
 
+        if (options.Value.ShowHeader)
+        {
+            ShowHeader();
+        }
+
         var rootDirectory = options.Value.RootDirectory;
 
         var directoriesConfig = new DirectoriesConfig(rootDirectory);
@@ -69,14 +77,15 @@ public class Program
         // Add services to the container.
         builder.Services.AddAuthorization();
 
-        // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-        builder.Services.AddOpenApi();
 
+        if (config.Development.EnableSwagger)
+        {
+            builder.Services.AddOpenApi();
 
-        builder.Services.AddSwaggerGen(
-            c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "Neptune Rest Server", Version = "v1" }); }
-        );
-
+            builder.Services.AddSwaggerGen(
+                c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "Neptune Rest Server", Version = "v1" }); }
+            );
+        }
 
 
         builder.Services
@@ -92,6 +101,8 @@ public class Program
         );
 
 
+        InitJwtAuth(builder.Services, config);
+
         builder.Services.RegisterServiceToLoadAtStartup<IDatabaseService>();
 
         builder.Services.AddHostedService<NeptuneHostedService>();
@@ -101,7 +112,7 @@ public class Program
         app.MapGet("/", () => "Hello World!");
 
         // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
+        if (config.Development.EnableSwagger)
         {
             app.MapOpenApi();
             app.UseSwagger();
@@ -133,4 +144,44 @@ public class Program
 
         return (await File.ReadAllTextAsync(configFile)).FromYaml<NeptuneServerConfig>();
     }
+
+    private static void InitJwtAuth(IServiceCollection services, NeptuneServerConfig config)
+    {
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(
+                options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = config.JwtAuth.Issuer,
+                        ValidAudience = config.JwtAuth.Audience,
+                        IssuerSigningKey =
+                            new SymmetricSecurityKey(config.JwtAuth.Secret.FromBase64ToByteArray())
+                    };
+                }
+            );
+
+        services.AddAuthorization();
+    }
+
+    private static void ShowHeader()
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        const string resourceName = "Neptune.Rest.Server.Assets.header.txt";
+        using var stream = assembly.GetManifestResourceStream(resourceName);
+        using var reader = new StreamReader(stream);
+        var version = assembly.GetName().Version;
+
+        var customAttribute = assembly.GetCustomAttributes<AssemblyMetadataAttribute>()
+            .FirstOrDefault(a => a.Key == "Codename");
+
+        Console.WriteLine(reader.ReadToEnd());
+        Console.WriteLine($"  >> Codename: {customAttribute?.Value ?? "Unknown"}");
+        Console.WriteLine($"  >> Version: {version}");
+    }
+
 }

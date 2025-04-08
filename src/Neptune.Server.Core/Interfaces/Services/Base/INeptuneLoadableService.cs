@@ -1,4 +1,4 @@
-namespace Neptune.Server.Core.Interfaces;
+namespace Neptune.Server.Core.Interfaces.Services.Base;
 
 public interface INeptuneLoadableService
 {
