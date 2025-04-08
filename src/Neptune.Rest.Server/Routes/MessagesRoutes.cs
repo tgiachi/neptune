@@ -1,5 +1,7 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
-
+using Neptune.Rest.Server.Interfaces;
 using Neptune.Server.Core.Data.Rest;
 
 namespace Neptune.Rest.Server.Routes;
@@ -13,8 +15,13 @@ public static class MessagesRoutes
 
         group.MapPost(
                 "/send",
-                ([FromBody] MessageRequestObject messageRequest) =>
+                (HttpContext httpContext, [FromBody] MessageRequestObject messageRequest, IAuthService authService) =>
                 {
+
+                    var user = httpContext.User;
+
+                    var fullName = user.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
+
                     return Results.Ok(new MessageResponseObject());
                 }
 

@@ -1,10 +1,12 @@
 using System.Net;
 using System.Reflection;
+using System.Text;
 using System.Text.Json.Serialization;
 using CommandLine;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Neptune.Core.Extensions;
@@ -270,6 +272,8 @@ public class Program
 
     private static void InitJwtAuth(IServiceCollection services, NeptuneServerConfig config)
     {
+
+        IdentityModelEventSource.ShowPII = true;
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(
                 options =>
@@ -283,7 +287,7 @@ public class Program
                         ValidIssuer = config.JwtAuth.Issuer,
                         ValidAudience = config.JwtAuth.Audience,
                         IssuerSigningKey =
-                            new SymmetricSecurityKey(config.JwtAuth.Secret.FromBase64ToByteArray())
+                            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.JwtAuth.Secret)),
                     };
                 }
             );
