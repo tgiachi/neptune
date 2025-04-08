@@ -14,7 +14,10 @@ public static class MessagesRoutes
         group.MapPost(
                 "/send",
                 ([FromBody] MessageRequestObject messageRequest) =>
-                    Results.Ok(new MessageResponseObject())
+                {
+                    return Results.Ok(new MessageResponseObject());
+                }
+
             )
             .WithDescription("Send a message")
             .WithName("SendMessage")
