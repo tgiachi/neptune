@@ -152,6 +152,8 @@ public class Program
             builder.Services.AddSingleton<IMessageQueueService, RabbitMqMessageQueueService>();
         }
 
+        builder.Services.RegisterServiceToLoadAtStartup<IMessageQueueService>();
+
 
         builder.Services
             .AddDbEntity<MessageEntity>()

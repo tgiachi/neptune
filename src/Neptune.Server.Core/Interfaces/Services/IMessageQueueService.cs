@@ -5,4 +5,5 @@ namespace Neptune.Server.Core.Interfaces.Services;
 public interface IMessageQueueService : INeptuneLoadableService
 {
 
+    
 }
