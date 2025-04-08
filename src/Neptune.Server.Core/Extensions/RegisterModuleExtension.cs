@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Neptune.Server.Core.Interfaces;
 using Neptune.Server.Core.Interfaces.Containers;
+using Serilog;
 
 namespace Neptune.Server.Core.Extensions;
 
@@ -18,6 +19,7 @@ public static class RegisterModuleExtension
             );
         }
 
+        Log.ForContext(moduleType).Debug("Registering NeptuneModule {ModuleType}", moduleType.Name);
         var module = (INeptuneContainerModule)Activator.CreateInstance(moduleType);
 
         module.Initialize(services);

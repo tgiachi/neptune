@@ -34,6 +34,10 @@ public class NeptuneHostedService : IHostedService
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during loading service: {Service}", serviceType.ServiceType);
+
+                throw new InvalidOperationException(
+                    $"Error during loading service: {serviceType.ServiceType}", ex
+                );
             }
         }
     }

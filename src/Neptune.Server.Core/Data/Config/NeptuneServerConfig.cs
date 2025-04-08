@@ -13,5 +13,7 @@ public class NeptuneServerConfig
 
     public DevelopmentConfig Development { get; set; } = new();
 
+    public WebServerConfig WebServer { get; set; } = new();
+
     public LogLevelType LogLevel { get; set; } = LogLevelType.Information;
 }
