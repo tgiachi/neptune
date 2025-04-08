@@ -12,9 +12,11 @@ using Neptune.Rest.Server.Data.Options;
 using Neptune.Rest.Server.Entities;
 using Neptune.Rest.Server.Hosted;
 using Neptune.Rest.Server.Modules;
+using Neptune.Rest.Server.Routes;
 using Neptune.Rest.Server.Services;
 using Neptune.Server.Core.Data.Config;
 using Neptune.Server.Core.Data.Directories;
+using Neptune.Server.Core.Data.Rest;
 using Neptune.Server.Core.Extensions;
 using Neptune.Server.Core.Interfaces.Services;
 using Neptune.Server.Core.Types;
@@ -176,7 +178,16 @@ public class Program
 
         var app = builder.Build();
 
-        app.MapGet("/", () => "Hello World!");
+
+        var version = Assembly.GetExecutingAssembly().GetName().Version;
+        // Default endpoint
+        app.MapGet(
+                "/",
+                () => Results.Ok(new VersionResponseObject("Neptune Server", version.ToString(), "OK"))
+            )
+            .WithName("GetVersion")
+            .Produces<VersionResponseObject>(StatusCodes.Status200OK)
+            .WithTags("Info");
 
         // Configure the HTTP request pipeline.
         if (config.Development.EnableSwagger)
@@ -196,6 +207,12 @@ public class Program
 
         app.UseAuthorization();
 
+
+        var apiGroup = app.MapGroup("/api/v1");
+
+        apiGroup
+            .MapGenerateKeysRoutes()
+            .MapSystemRoutes();
 
         await app.RunAsync();
     }
