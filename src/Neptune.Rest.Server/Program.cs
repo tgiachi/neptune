@@ -1,27 +1,33 @@
 using System.Net;
 using System.Reflection;
+using System.Text.Json.Serialization;
 using CommandLine;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Neptune.Core.Extensions;
+using Neptune.Core.Utils;
 using Neptune.Database.Core.Extensions;
 using Neptune.Database.Core.Interfaces.Services;
 using Neptune.Rest.Server.Data.Options;
 using Neptune.Rest.Server.Entities;
 using Neptune.Rest.Server.Hosted;
+using Neptune.Rest.Server.Interfaces;
 using Neptune.Rest.Server.Modules;
 using Neptune.Rest.Server.Routes;
 using Neptune.Rest.Server.Services;
 using Neptune.Server.Core.Data.Config;
 using Neptune.Server.Core.Data.Directories;
 using Neptune.Server.Core.Data.Rest;
+using Neptune.Server.Core.Data.Rest.Validation;
 using Neptune.Server.Core.Extensions;
 using Neptune.Server.Core.Interfaces.Services;
 using Neptune.Server.Core.Types;
 using Serilog;
 using Serilog.Formatting.Json;
+using SharpGrip.FluentValidation.AutoValidation.Endpoints.Extensions;
 
 namespace Neptune.Rest.Server;
 
@@ -142,6 +148,13 @@ public class Program
             );
         }
 
+        builder.Services.AddFluentValidationAutoValidation();
+
+        builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
+
+
+        builder.Services.AddProblemDetails();
+
         var messageQueueConfig = config.MessagesQueue.ParseMessageQueueConnection();
 
         if (messageQueueConfig.Type == MessageQueueType.Internal)
@@ -155,6 +168,21 @@ public class Program
         }
 
         builder.Services.RegisterServiceToLoadAtStartup<IMessageQueueService>();
+
+
+        builder.Services.ConfigureHttpJsonOptions(
+            o =>
+            {
+                o.SerializerOptions.DefaultIgnoreCondition = JsonUtils.GetDefaultJsonSettings().DefaultIgnoreCondition;
+                o.SerializerOptions.Converters.Add(JsonUtils.GetDefaultJsonSettings().Converters[0]);
+                o.SerializerOptions.WriteIndented = JsonUtils.GetDefaultJsonSettings().WriteIndented;
+                o.SerializerOptions.PropertyNamingPolicy =
+                    JsonUtils.GetDefaultJsonSettings().PropertyNamingPolicy;
+
+                o.SerializerOptions.PropertyNameCaseInsensitive =
+                    JsonUtils.GetDefaultJsonSettings().PropertyNameCaseInsensitive;
+            }
+        );
 
 
         builder.Services
@@ -173,6 +201,8 @@ public class Program
         InitJwtAuth(builder.Services, config);
 
         builder.Services.RegisterServiceToLoadAtStartup<IDatabaseService>();
+
+        builder.Services.AddSingleton<IAuthService, AuthService>();
 
         builder.Services.AddHostedService<NeptuneHostedService>();
 
@@ -214,6 +244,7 @@ public class Program
             .MapGenerateKeysRoutes()
             .MapSystemRoutes()
             .MapMessageRoutes()
+            .MapAuthRoutes()
             ;
 
         await app.RunAsync();

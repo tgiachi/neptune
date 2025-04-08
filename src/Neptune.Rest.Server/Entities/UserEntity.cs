@@ -15,6 +15,11 @@ public class UserEntity : BaseDbEntity
 
     [Column(IsNullable = false)] public string PasswordHash { get; set; }
 
+
+    [MaxLength(64)] public string RefreshToken { get; set; }
+
+    public DateTime? RefreshTokenExpiry { get; set; }
+
     [MaxLength(200)]
     [Column(IsNullable = false)]
     public string NodeHostName { get; set; }
@@ -23,4 +28,10 @@ public class UserEntity : BaseDbEntity
 
     [Navigate(nameof(ChannelMemberEntity.UserId))]
     public List<ChannelMemberEntity> Channels { get; set; }
+
+
+    public string GetFullName()
+    {
+        return $"{Username}@{NodeHostName}";
+    }
 }

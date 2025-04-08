@@ -53,7 +53,9 @@ public class NeptuneEncryptorX25519
     public static PublicKey ImportPublicKey(string base64)
     {
         if (string.IsNullOrEmpty(base64))
+        {
             throw new ArgumentException("Public key cannot be empty", nameof(base64));
+        }
 
         try
         {
@@ -68,7 +70,9 @@ public class NeptuneEncryptorX25519
     public static bool IsValidPublicKey(string base64)
     {
         if (string.IsNullOrEmpty(base64))
+        {
             return false;
+        }
 
         try
         {
@@ -95,6 +99,7 @@ public class NeptuneEncryptorX25519
     public string ExportPublicKeyBase64() =>
         Convert.ToBase64String(ExportPublicKey());
 
+
     // Encryption
     public byte[] Encrypt(byte[] plaintext, PublicKey recipientPublicKey)
     {
@@ -116,14 +121,16 @@ public class NeptuneEncryptorX25519
             nonce,
             Array.Empty<byte>(),
             EncryptionAlgorithm,
-            new KeyCreationParameters());
+            new KeyCreationParameters()
+        );
 
         // Encrypt the data
         var ciphertext = EncryptionAlgorithm.Encrypt(
             encryptionKey,
             nonce,
             Array.Empty<byte>(),
-            plaintext);
+            plaintext
+        );
 
         // Combine nonce and ciphertext into a single array
         var result = new byte[nonce.Length + ciphertext.Length];
@@ -169,14 +176,16 @@ public class NeptuneEncryptorX25519
             nonce,
             Array.Empty<byte>(),
             EncryptionAlgorithm,
-            new KeyCreationParameters());
+            new KeyCreationParameters()
+        );
 
         // Decrypt the data
         return EncryptionAlgorithm.Decrypt(
             encryptionKey,
             nonce,
             Array.Empty<byte>(),
-            ciphertext);
+            ciphertext
+        );
     }
 
     public string DecryptFromBase64(string base64, PublicKey senderPublicKey)

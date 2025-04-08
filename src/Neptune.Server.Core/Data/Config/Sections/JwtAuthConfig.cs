@@ -10,4 +10,6 @@ public class JwtAuthConfig
     public string Secret { get; set; } = RandomNumberGenerator.GetBytes(128).ToBase64();
 
     public int ExpirationInMinutes { get; set; } = 60 * 24 * 31; // 31 day
+
+    public int RefreshTokenExpiryDays { get; set; } = 1;
 }

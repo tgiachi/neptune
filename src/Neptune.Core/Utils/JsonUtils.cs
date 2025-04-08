@@ -12,6 +12,7 @@ public static class JsonUtils
         {
             PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
             WriteIndented = formatted,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault | JsonIgnoreCondition.WhenWritingNull,
             PropertyNameCaseInsensitive = true,
             Converters = { new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower) },
         };
