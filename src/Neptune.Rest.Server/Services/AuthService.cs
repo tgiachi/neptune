@@ -83,7 +83,7 @@ public class AuthService : IAuthService
         var passwordHash = cleanedPassword.Split(":")[0];
         var salt = cleanedPassword.Split(":")[1];
 
-        var isOk = HashUtils.VerifyPassword(userEntity.PasswordHash, passwordHash, salt);
+        var isOk = HashUtils.VerifyPassword(loginRequest.Password, passwordHash, salt);
 
         if (!isOk)
         {

@@ -16,7 +16,7 @@ public class UserEntity : BaseDbEntity
     [Column(IsNullable = false)] public string PasswordHash { get; set; }
 
 
-    [MaxLength(64)] public string RefreshToken { get; set; }
+    [MaxLength(100)] public string RefreshToken { get; set; }
 
     public DateTime? RefreshTokenExpiry { get; set; }
 
