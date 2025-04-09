@@ -3,7 +3,9 @@ using AbyssIrc.Signals.Interfaces.Services;
 using Neptune.Core.Extensions;
 using Neptune.Core.Utils;
 using Neptune.Database.Core.Interfaces.DataAccess;
+using Neptune.Packets.Messages;
 using Neptune.Rest.Server.Entities;
+using Neptune.Rest.Server.Extensions;
 using Neptune.Server.Core.Data.Config;
 using Neptune.Server.Core.Data.Cryptography;
 using Neptune.Server.Core.Data.Internal;
@@ -81,13 +83,21 @@ public class MessageService : IMessageService, IAbyssSignalListener<IncomingMess
         }
 
         var username = signalEvent.To.Split('@')[0];
+
         var nodeId = signalEvent.To.Split('@')[1];
 
         if (nodeId == _serverConfig.NodeName)
         {
             _logger.LogInformation("Dispatch to local user {Username}", signalEvent.To);
 
-            await SendMessageToLocalUser(Guid.Parse(signalEvent.MessageId), signalEvent.From, username, signalEvent.Message);
+            var messageEntity = await SendMessageToLocalUser(
+                Guid.Parse(signalEvent.MessageId),
+                signalEvent.From,
+                username,
+                signalEvent.Message
+            );
+
+            await _abyssSignalService.PublishAsync(new MessageAddedEvent(messageEntity.ToNeptuneMessage()));
 
             return;
         }
@@ -95,7 +105,7 @@ public class MessageService : IMessageService, IAbyssSignalListener<IncomingMess
         _logger.LogInformation("Dispatch to remote user {Username}", signalEvent.To);
     }
 
-    private async Task SendMessageToLocalUser(Guid messageId, string from, string to, string message)
+    private async Task<MessageEntity> SendMessageToLocalUser(Guid messageId, string from, string to, string message)
     {
         var fromUser = from.Split('@')[0];
         var toUser = to.Split('@')[0];
@@ -105,7 +115,7 @@ public class MessageService : IMessageService, IAbyssSignalListener<IncomingMess
         if (toUserEntity == null)
         {
             _logger.LogWarning("User {Username} not found", toUser);
-            return;
+            return null;
         }
 
         var enc = new NeptuneCryptObject();
@@ -132,5 +142,7 @@ public class MessageService : IMessageService, IAbyssSignalListener<IncomingMess
         messageEntity = await _messageDataAccess.InsertAsync(messageEntity);
 
         _logger.LogInformation("Message sent to {Username}", toUser);
+
+        return messageEntity;
     }
 }

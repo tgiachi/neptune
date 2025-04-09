@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Microsoft.Extensions.Logging;
@@ -13,7 +14,6 @@ public class UdpTransport : INeptuneTransport
     public string Name => "UDP";
 
 
-
     private readonly ILogger _logger;
 
     private readonly UdpTransportConfig _transportConfig;
@@ -22,13 +22,14 @@ public class UdpTransport : INeptuneTransport
     {
         _logger = logger;
         _transportConfig = transportConfig;
+
+        _transportConfig.IpAddress ??= "255.255.255.255";
     }
 
     public async Task SendMessageAsync(NeptuneMessage message)
     {
         using var udpClient = new UdpClient(_transportConfig.Port);
         udpClient.EnableBroadcast = true;
-
 
         var payload = message.ToCbor();
 
@@ -50,9 +51,14 @@ public class UdpTransport : INeptuneTransport
 
         var packet = stream.ToArray();
 
-        await udpClient.SendAsync(packet, _transportConfig.Port);
+        _logger.LogDebug("Sending UDP packet: {PacketLenght}", packet.Length);
+        var byteWritten = await udpClient.SendAsync(
+            packet,
+            packet.Length,
+            new IPEndPoint(IPAddress.Parse("255.255.255.255"), _transportConfig.Port)
+        );
 
-
+        _logger.LogDebug("Sent {ByteWritten} bytes to UDP", byteWritten);
     }
 
     public Task<NeptuneMessage> OnMessageReceivedAsync(byte[] payload)
