@@ -68,7 +68,7 @@ public class MessageService : IMessageService, IAbyssSignalListener<IncomingMess
         );
 
 
-        return Guid.Empty;
+        return messageId;
     }
 
     public async Task OnEventAsync(IncomingMessageEvent signalEvent)
@@ -87,7 +87,7 @@ public class MessageService : IMessageService, IAbyssSignalListener<IncomingMess
         {
             _logger.LogInformation("Dispatch to local user {Username}", signalEvent.To);
 
-            await SendMessageToLocalUser(signalEvent.From, username, signalEvent.Message);
+            await SendMessageToLocalUser(Guid.Parse(signalEvent.MessageId), signalEvent.From, username, signalEvent.Message);
 
             return;
         }
@@ -95,7 +95,7 @@ public class MessageService : IMessageService, IAbyssSignalListener<IncomingMess
         _logger.LogInformation("Dispatch to remote user {Username}", signalEvent.To);
     }
 
-    private async Task<Guid> SendMessageToLocalUser(string from, string to, string message)
+    private async Task SendMessageToLocalUser(Guid messageId, string from, string to, string message)
     {
         var fromUser = from.Split('@')[0];
         var toUser = to.Split('@')[0];
@@ -105,7 +105,7 @@ public class MessageService : IMessageService, IAbyssSignalListener<IncomingMess
         if (toUserEntity == null)
         {
             _logger.LogWarning("User {Username} not found", toUser);
-            return Guid.Empty;
+            return;
         }
 
         var enc = new NeptuneCryptObject();
@@ -117,6 +117,7 @@ public class MessageService : IMessageService, IAbyssSignalListener<IncomingMess
 
         var messageEntity = new MessageEntity()
         {
+            Id = messageId,
             From = from,
             To = to,
             Payload = encryptedMessage,
@@ -131,7 +132,5 @@ public class MessageService : IMessageService, IAbyssSignalListener<IncomingMess
         messageEntity = await _messageDataAccess.InsertAsync(messageEntity);
 
         _logger.LogInformation("Message sent to {Username}", toUser);
-
-        return messageEntity.Id;
     }
 }

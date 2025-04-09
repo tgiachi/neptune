@@ -31,7 +31,11 @@ public class AbstractGuidDataAccess<TEntity> : IDataAccess<TEntity>
 
     public Task<TEntity> InsertAsync(TEntity entity)
     {
-        entity.Id = Guid.NewGuid();
+        if (entity.Id == Guid.Empty)
+        {
+            entity.Id = Guid.NewGuid();
+        }
+
         entity.CreatedAt = DateTime.UtcNow;
         return _repository.InsertAsync(entity);
     }
@@ -41,7 +45,11 @@ public class AbstractGuidDataAccess<TEntity> : IDataAccess<TEntity>
         entity.ForEach(
             e =>
             {
-                e.Id = Guid.NewGuid();
+                if (e.Id == Guid.Empty)
+                {
+                    e.Id = Guid.NewGuid();
+                }
+
                 e.CreatedAt = DateTime.UtcNow;
             }
         );
@@ -53,7 +61,11 @@ public class AbstractGuidDataAccess<TEntity> : IDataAccess<TEntity>
         entities.ForEach(
             e =>
             {
-                e.Id = Guid.NewGuid();
+                if (e.Id == Guid.Empty)
+                {
+                    e.Id = Guid.NewGuid();
+                }
+
                 e.CreatedAt = DateTime.UtcNow;
             }
         );

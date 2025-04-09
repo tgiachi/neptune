@@ -7,7 +7,7 @@ namespace Neptune.Database.Core.Impl.Entities;
 public class BaseDbEntity : IDbEntity
 {
     [Column(IsIdentity = true, IsPrimary = true)]
-    [Key] public Guid Id { get; set; }
+    [Key] public Guid Id { get; set; } = Guid.NewGuid();
 
     public DateTime CreatedAt { get; set; }
 
