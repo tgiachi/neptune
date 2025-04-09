@@ -5,22 +5,13 @@ using Neptune.Database.Core.Impl.Entities;
 namespace Neptune.Rest.Server.Entities;
 
 [System.ComponentModel.DataAnnotations.Schema.Table("messages")]
-
 public class MessageEntity : BaseDbEntity
 {
+    [Required] [MaxLength(420)] public string From { get; set; }
 
-    [Required]
-    [MaxLength(420)]
-    public string From { get; set; }
-
-    [Required]
-    [MaxLength(420)]
-    public string To { get; set; }
-
+    [Required] [MaxLength(420)] public string To { get; set; }
 
     public Guid? ChannelId { get; set; }
-
-
 
     public string Payload { get; set; } // base64 encoded encrypted payload
 
