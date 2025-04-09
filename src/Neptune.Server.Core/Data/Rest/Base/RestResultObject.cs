@@ -12,7 +12,7 @@ public class RestResultObject<T>
     /// <summary>
     /// Indicates whether the operation was successful
     /// </summary>
-    public bool Success { get; set; }
+    public bool IsSuccess { get; set; }
 
     /// <summary>
     /// HTTP status code
@@ -23,6 +23,7 @@ public class RestResultObject<T>
     /// <summary>
     /// Status code as integer for serialization in the response
     /// </summary>
+    [JsonIgnore]
     public int Status => (int)StatusCode;
 
     /// <summary>
@@ -38,20 +39,19 @@ public class RestResultObject<T>
     /// <summary>
     /// Any errors that occurred during the operation
     /// </summary>
-    public List<string> Errors { get; set; }
+    public List<string> Errors { get; set; } = null;
 
     /// <summary>
     /// Timestamp of the operation
     /// </summary>
-    public DateTime Timestamp { get; set; }
+    public long Timestamp { get; set; }
 
     /// <summary>
     /// Default constructor
     /// </summary>
     public RestResultObject()
     {
-        Errors = new List<string>();
-        Timestamp = DateTime.UtcNow;
+        Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
     }
 
     /// <summary>
@@ -67,10 +67,11 @@ public class RestResultObject<T>
     {
         return new RestResultObject<T>
         {
-            Success = true,
+            IsSuccess = true,
             StatusCode = statusCode,
             Message = message,
-            Data = data
+            Data = data,
+            Errors = null
         };
     }
 
@@ -86,7 +87,7 @@ public class RestResultObject<T>
     {
         return new RestResultObject<T>
         {
-            Success = true,
+            IsSuccess = true,
             StatusCode = statusCode,
             Message = message,
             Data = default,
@@ -107,9 +108,10 @@ public class RestResultObject<T>
     {
         var result = new RestResultObject<T>
         {
-            Success = false,
+            IsSuccess = false,
             StatusCode = statusCode,
-            Message = message
+            Message = message,
+            Errors = errors ?? new List<string>()
         };
 
         if (errors != null)
@@ -133,7 +135,7 @@ public class RestResultObject<T>
     {
         return new RestResultObject<T>
         {
-            Success = false,
+            IsSuccess = false,
             StatusCode = statusCode,
             Message = message ?? "An error occurred: " + ex.Message,
             Errors = new List<string> { ex.Message }

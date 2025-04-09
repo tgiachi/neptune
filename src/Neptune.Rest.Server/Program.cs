@@ -205,6 +205,7 @@ public class Program
         builder.Services.RegisterServiceToLoadAtStartup<IDatabaseService>();
 
         builder.Services.AddSingleton<IAuthService, AuthService>();
+        builder.Services.AddSingleton<IMessageService, MessageService>();
 
         builder.Services.AddHostedService<NeptuneHostedService>();
 

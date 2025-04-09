@@ -1,8 +1,11 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
+using Neptune.Rest.Server.Extensions;
 using Neptune.Rest.Server.Interfaces;
 using Neptune.Server.Core.Data.Rest;
+using Neptune.Server.Core.Data.Rest.Base;
+using Neptune.Server.Core.Interfaces.Services;
 
 namespace Neptune.Rest.Server.Routes;
 
@@ -15,20 +18,22 @@ public static class MessagesRoutes
 
         group.MapPost(
                 "/send",
-                (HttpContext httpContext, [FromBody] MessageRequestObject messageRequest, IAuthService authService) =>
+                async (
+                    HttpContext httpContext, [FromBody] MessageRequestObject messageRequest, IMessageService messageService
+                ) =>
                 {
-
                     var user = httpContext.User;
 
                     var fullName = user.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
 
-                    return Results.Ok(new MessageResponseObject());
-                }
+                    await messageService.DispatchMessageAsync(fullName, messageRequest.To, messageRequest.Message);
 
+                    return RestResultObject<MessageResponseObject>.CreateSuccess(new MessageResponseObject()).ToResult();
+                }
             )
             .WithDescription("Send a message")
             .WithName("SendMessage")
-            .Produces<MessageResponseObject>()
+            .Produces<RestResultObject<MessageResponseObject>>()
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status500InternalServerError)
             .RequireAuthorization();
