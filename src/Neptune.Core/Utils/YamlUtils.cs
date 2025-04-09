@@ -11,6 +11,15 @@ public static class YamlUtils
         return deserializer.Deserialize<T>(yaml);
     }
 
+    public static object? Deserialize(string yaml, Type type)
+    {
+        var deserializer = new YamlDotNet.Serialization.DeserializerBuilder()
+            .WithNamingConvention(YamlDotNet.Serialization.NamingConventions.UnderscoredNamingConvention.Instance)
+            .Build();
+
+        return deserializer.Deserialize(yaml, type);
+    }
+
     public static string Serialize<T>(T obj)
     {
         var serializer = new YamlDotNet.Serialization.SerializerBuilder()

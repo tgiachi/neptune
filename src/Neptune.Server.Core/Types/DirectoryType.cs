@@ -4,5 +4,6 @@ public enum DirectoryType
 {
     Root,
     Certs,
-    Logs
+    Logs,
+    Transports
 }

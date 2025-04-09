@@ -22,5 +22,7 @@ public class NeptuneServerConfig
 
     public LogLevelType LogLevel { get; set; } = LogLevelType.Information;
 
+    public TransportsConfig Transports { get; set; } = new();
+
     public string SharedKey { get; set; } = HashUtils.GenerateBase64Key();
 }

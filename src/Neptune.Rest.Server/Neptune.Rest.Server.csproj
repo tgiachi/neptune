@@ -37,6 +37,8 @@
         <ProjectReference Include="..\Neptune.Database.Core\Neptune.Database.Core.csproj"/>
         <ProjectReference Include="..\Neptune.Packets\Neptune.Packets.csproj"/>
         <ProjectReference Include="..\Neptune.Server.Core\Neptune.Server.Core.csproj"/>
+        <ProjectReference Include="..\Neptune.Transport.Core\Neptune.Transport.Core.csproj" />
+        <ProjectReference Include="..\Neptune.Udp.Transport\Neptune.Udp.Transport.csproj" />
     </ItemGroup>
 
     <ItemGroup>

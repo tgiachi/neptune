@@ -13,4 +13,9 @@ public static class YamlMethodExtension
     {
         return YamlUtils.Deserialize<T>(yaml);
     }
+
+    public static object? FromYaml(this string yaml, Type type)
+    {
+        return YamlUtils.Deserialize(yaml, type);
+    }
 }

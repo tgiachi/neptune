@@ -2,18 +2,18 @@
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
-        <LangVersion>14</LangVersion>
+        <LangVersion>latest</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Neptune.Packets\Neptune.Packets.csproj" />
-      <ProjectReference Include="..\Neptune.Server.Core\Neptune.Server.Core.csproj" />
+        <ProjectReference Include="..\Neptune.Packets\Neptune.Packets.csproj"/>
+        <ProjectReference Include="..\Neptune.Server.Core\Neptune.Server.Core.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="PeterO.Cbor" Version="4.5.5" />
+        <PackageReference Include="PeterO.Cbor" Version="4.5.5"/>
     </ItemGroup>
 
 </Project>

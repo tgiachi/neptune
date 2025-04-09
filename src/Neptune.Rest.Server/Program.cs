@@ -27,6 +27,9 @@ using Neptune.Server.Core.Data.Rest.Validation;
 using Neptune.Server.Core.Extensions;
 using Neptune.Server.Core.Interfaces.Services;
 using Neptune.Server.Core.Types;
+using Neptune.Transport.Core.Extensions;
+using Neptune.Udp.Transport;
+using Neptune.Udp.Transport.Config;
 using Serilog;
 using Serilog.Formatting.Json;
 using SharpGrip.FluentValidation.AutoValidation.Endpoints.Extensions;
@@ -202,12 +205,19 @@ public class Program
 
         InitJwtAuth(builder.Services, config);
 
-        builder.Services.RegisterServiceToLoadAtStartup<IDatabaseService>();
+        builder.Services.AddSingleton<ITransportManagerService, TransportManagerService>();
+
+        builder.Services
+
+            .RegisterServiceToLoadAtStartup<IDatabaseService>()
+            .RegisterServiceToLoadAtStartup<ITransportManagerService>();
 
         builder.Services.AddSingleton<IAuthService, AuthService>();
         builder.Services.AddSingleton<IMessageService, MessageService>();
 
         builder.Services.AddHostedService<NeptuneHostedService>();
+
+        builder.Services.AddNeptuneTransport<UdpTransport,UdpTransportConfig>(directoriesConfig);
 
         var app = builder.Build();
 
@@ -268,12 +278,16 @@ public class Program
 
         Log.Logger.Information("Loading configuration file...");
 
-        return (await File.ReadAllTextAsync(configFile)).FromYaml<NeptuneServerConfig>();
+        var loadedConfig = (await File.ReadAllTextAsync(configFile)).FromYaml<NeptuneServerConfig>();
+
+        await File.WriteAllTextAsync(configFile, loadedConfig.ToYaml());
+
+        return loadedConfig;
+
     }
 
     private static void InitJwtAuth(IServiceCollection services, NeptuneServerConfig config)
     {
-
         IdentityModelEventSource.ShowPII = true;
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(
