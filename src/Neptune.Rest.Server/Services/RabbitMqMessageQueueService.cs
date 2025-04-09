@@ -1,9 +1,12 @@
 using System.Text;
+using AbyssIrc.Signals.Interfaces.Listeners;
+using AbyssIrc.Signals.Interfaces.Services;
 using Neptune.Core.Extensions;
 using Neptune.Database.Core.Data.Messages;
 using Neptune.Packets.Messages;
 using Neptune.Server.Core.Data.Config;
 using Neptune.Server.Core.Data.Internal;
+using Neptune.Server.Core.Events.Messages;
 using Neptune.Server.Core.Extensions;
 using Neptune.Server.Core.Interfaces.Services;
 using RabbitMQ.Client;
@@ -11,11 +14,13 @@ using RabbitMQ.Client.Events;
 
 namespace Neptune.Rest.Server.Services;
 
-public class RabbitMqMessageQueueService : IMessageQueueService, IDisposable
+public class RabbitMqMessageQueueService : IMessageQueueService, IDisposable, IAbyssSignalListener<SendMessageQueueEvent>
 {
     private readonly NeptuneServerConfig _neptuneServerConfig;
 
     private readonly MessageQueueConnectionData _messageQueueConnection;
+
+    private readonly IAbyssSignalService _abyssSignalService;
 
     private readonly ILogger _logger;
 
@@ -23,9 +28,13 @@ public class RabbitMqMessageQueueService : IMessageQueueService, IDisposable
     private IChannel _channel;
     private IConnection _connection;
 
-    public RabbitMqMessageQueueService(ILogger<RabbitMqMessageQueueService> logger, NeptuneServerConfig neptuneServerConfig)
+    public RabbitMqMessageQueueService(
+        ILogger<RabbitMqMessageQueueService> logger, NeptuneServerConfig neptuneServerConfig,
+        IAbyssSignalService abyssSignalService
+    )
     {
         _neptuneServerConfig = neptuneServerConfig;
+        _abyssSignalService = abyssSignalService;
         _messageQueueConnection = _neptuneServerConfig.MessagesQueue.ParseMessageQueueConnection();
         _logger = logger;
         _connectionFactory = new ConnectionFactory
@@ -33,6 +42,8 @@ public class RabbitMqMessageQueueService : IMessageQueueService, IDisposable
             HostName = _messageQueueConnection.Hostname,
             Port = _messageQueueConnection.Port ?? 5672
         };
+
+        _abyssSignalService.Subscribe(this);
     }
 
     public async Task StartAsync()
@@ -93,9 +104,7 @@ public class RabbitMqMessageQueueService : IMessageQueueService, IDisposable
 
             try
             {
-                var queueMessage = message.FromJson<NeptuneQueueMessage>();
-
-                await ParseAndDispatchMessageAsync(queueMessage);
+                await ParseAndDispatchMessageAsync(message);
             }
             catch (Exception ex)
             {
@@ -114,9 +123,34 @@ public class RabbitMqMessageQueueService : IMessageQueueService, IDisposable
     }
 
 
-    private async Task ParseAndDispatchMessageAsync(NeptuneQueueMessage message)
+    private async Task ParseAndDispatchMessageAsync(string message)
     {
-        _logger.LogInformation("Received message from source: {Source} => {Message}", message.Source, message.Message);
+        try
+        {
+            var queueMessage = message.FromJson<SendMessageQueueEvent>();
+
+            var messageData = queueMessage.Payload.DecryptString(_neptuneServerConfig.SharedKey)
+                .FromJson<OutgoingMessageData>();
+
+
+            var messageEvent = new IncomingMessageEvent(
+                messageData.From,
+                messageData.To,
+                messageData.MessageId,
+                messageData.Message,
+                messageData.SourceNodeId
+
+            );
+
+            await _abyssSignalService.PublishAsync(messageEvent);
+
+
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "RabbitMQ received exception during parsing message: {Message}", message);
+        }
     }
 
     public void Dispose()
@@ -124,5 +158,15 @@ public class RabbitMqMessageQueueService : IMessageQueueService, IDisposable
         _channel?.Dispose();
         _connection?.Dispose();
         GC.SuppressFinalize(this);
+    }
+
+    public async Task OnEventAsync(SendMessageQueueEvent signalEvent)
+    {
+        _logger.LogDebug("Sending message to queue: {MessageId}", signalEvent.MessageId);
+        await _channel.BasicPublishAsync(
+            string.Empty,
+            _messageQueueConnection.QueueName,
+            Encoding.UTF8.GetBytes(signalEvent.ToJson())
+        );
     }
 }

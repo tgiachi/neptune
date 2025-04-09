@@ -7,11 +7,11 @@ public static class JsonUtils
 {
     private static JsonSerializerOptions? _jsonSerializerOptions;
 
-    public static JsonSerializerOptions? GetDefaultJsonSettings(bool formatted = true) =>
+    public static JsonSerializerOptions? GetDefaultJsonSettings() =>
         _jsonSerializerOptions ??= new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
-            WriteIndented = formatted,
+            WriteIndented = true,
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault | JsonIgnoreCondition.WhenWritingNull,
             PropertyNameCaseInsensitive = true,
             Converters = { new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower) },

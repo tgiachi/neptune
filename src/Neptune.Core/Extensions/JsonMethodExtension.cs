@@ -8,10 +8,7 @@ public static class JsonMethodExtension
     public static string ToJson<T>(this T obj, bool formatted = true)
     {
         var options = JsonUtils.GetDefaultJsonSettings();
-        if (formatted)
-        {
-            options!.WriteIndented = true;
-        }
+
 
         return JsonSerializer.Serialize(obj, options);
     }

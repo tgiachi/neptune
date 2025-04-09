@@ -1,3 +1,4 @@
+using Neptune.Core.Utils;
 using Neptune.Server.Core.Data.Config.Sections;
 using Neptune.Server.Core.Types;
 
@@ -20,4 +21,6 @@ public class NeptuneServerConfig
     public WebServerConfig WebServer { get; set; } = new();
 
     public LogLevelType LogLevel { get; set; } = LogLevelType.Information;
+
+    public string SharedKey { get; set; } = HashUtils.GenerateBase64Key();
 }

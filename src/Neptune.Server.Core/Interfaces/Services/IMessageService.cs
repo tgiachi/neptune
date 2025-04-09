@@ -4,6 +4,6 @@ namespace Neptune.Server.Core.Interfaces.Services;
 
 public interface IMessageService : INeptuneLoadableService
 {
-    Task DispatchMessageAsync(string from, string to, string message);
+    Task<Guid> DispatchMessageAsync(string from, string to, string message);
 
 }

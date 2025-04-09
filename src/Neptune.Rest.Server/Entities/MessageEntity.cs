@@ -13,11 +13,15 @@ public class MessageEntity : BaseDbEntity
 
     public Guid? ChannelId { get; set; }
 
+
+    [MaxLength(2000)]
     public string Payload { get; set; } // base64 encoded encrypted payload
 
+
+    [MaxLength(1000)]
     public string Signature { get; set; } // base64 encoded digital signature
 
-    public int Timestamp { get; set; }
+    public long Timestamp { get; set; }
 
     public int Hops { get; set; }
 

@@ -53,4 +53,39 @@ public class HashUtils
 
         return Convert.ToBase64String(randomBytes);
     }
+
+    public static string GenerateBase64Key(int byteLength = 32)
+    {
+        var key = new byte[byteLength];
+        RandomNumberGenerator.Fill(key);
+        return Convert.ToBase64String(key);
+    }
+
+    public static byte[] Encrypt(string plaintext, byte[] key)
+    {
+        using var aes = Aes.Create();
+        aes.Key = key;
+        aes.GenerateIV();
+
+        using var encryptor = aes.CreateEncryptor();
+        var plaintextBytes = System.Text.Encoding.UTF8.GetBytes(plaintext);
+        var cipherBytes = encryptor.TransformFinalBlock(plaintextBytes, 0, plaintextBytes.Length);
+
+        // concatena IV + CIPHERTEXT
+        return aes.IV.Concat(cipherBytes).ToArray();
+    }
+
+    public static string Decrypt(byte[] ivAndCiphertext, byte[] key)
+    {
+        using var aes = Aes.Create();
+        aes.Key = key;
+
+        aes.IV = ivAndCiphertext[..16];
+        var cipher = ivAndCiphertext[16..];
+
+        using var decryptor = aes.CreateDecryptor();
+        var plaintextBytes = decryptor.TransformFinalBlock(cipher, 0, cipher.Length);
+
+        return System.Text.Encoding.UTF8.GetString(plaintextBytes);
+    }
 }

@@ -26,9 +26,19 @@ public static class MessagesRoutes
 
                     var fullName = user.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
 
-                    await messageService.DispatchMessageAsync(fullName, messageRequest.To, messageRequest.Message);
+                    var messageId = await messageService.DispatchMessageAsync(
+                        fullName,
+                        messageRequest.To,
+                        messageRequest.Message
+                    );
 
-                    return RestResultObject<MessageResponseObject>.CreateSuccess(new MessageResponseObject()).ToResult();
+                    return RestResultObject<MessageResponseObject>.CreateSuccess(
+                            new MessageResponseObject()
+                            {
+                                MessageId = messageId.ToString(),
+                            }
+                        )
+                        .ToResult();
                 }
             )
             .WithDescription("Send a message")
