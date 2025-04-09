@@ -140,13 +140,16 @@ public class AuthService : IAuthService
             };
         }
 
-        var enc = new NeptuneEncryptorX25519();
 
-        enc.Generate();
+        var enc = new NeptuneCryptographyService();
+
+        var cryptObject = enc.CreateWithNewKeyPair();
 
 
-        var privateKey = enc.ExportPrivateKeyBase64();
-        var publicKey = enc.ExportPublicKeyBase64();
+
+
+        var privateKey = cryptObject.ExportPrivateKeyBase64();
+        var publicKey = cryptObject.ExportPublicKeyBase64();
 
         userEntity.PublicKey = publicKey;
         userEntity.NodeHostName = _neptuneServerConfig.NodeName;

@@ -14,9 +14,9 @@ public static class GenerateKeysRoutes
                 "",
                 () =>
                 {
-                    var keys = new NeptuneEncryptorX25519();
+                    var service = new NeptuneCryptographyService();
 
-                    keys.Generate();
+                    var keys = service.CreateWithNewKeyPair();
 
 
                     return RestResultObject<KeyResponseObject>.CreateSuccess(

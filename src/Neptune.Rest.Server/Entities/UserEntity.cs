@@ -24,6 +24,7 @@ public class UserEntity : BaseDbEntity
     [Column(IsNullable = false)]
     public string NodeHostName { get; set; }
 
+    [MaxLength(2000)]
     [Column(IsNullable = false)] public string PublicKey { get; set; }
 
     [Navigate(nameof(ChannelMemberEntity.UserId))]

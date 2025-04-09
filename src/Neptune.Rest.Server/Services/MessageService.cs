@@ -46,7 +46,7 @@ public class MessageService : IMessageService
         var username = to.Split('@')[0];
         var nodeId = to.Split('@')[1];
 
-        if (nodeId == _serverConfig.NodeId)
+        if (nodeId == _serverConfig.NodeName)
         {
             _logger.LogInformation("Dispatch to local user {Username}", to);
 
@@ -71,6 +71,12 @@ public class MessageService : IMessageService
             _logger.LogWarning("User {Username} not found", toUser);
             return;
         }
+
+        var enc = new NeptuneCryptObject();
+        enc.ImportPublicKeyBase64(toUserEntity.PublicKey);
+
+        var encryptedMessage = enc.EncryptMessage(message);
+
     }
 
 }
