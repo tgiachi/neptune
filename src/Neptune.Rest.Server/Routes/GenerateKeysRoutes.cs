@@ -1,5 +1,6 @@
 using Neptune.Server.Core.Data.Cryptography;
 using Neptune.Server.Core.Data.Rest;
+using Neptune.Server.Core.Data.Rest.Base;
 
 namespace Neptune.Rest.Server.Routes;
 
@@ -18,7 +19,9 @@ public static class GenerateKeysRoutes
                     keys.Generate();
 
 
-                    return Results.Ok(new KeyResponseObject(keys.ExportPublicKeyBase64(), keys.ExportPrivateKeyBase64()));
+                    return RestResultObject<KeyResponseObject>.CreateSuccess(
+                        new KeyResponseObject(keys.ExportPublicKeyBase64(), keys.ExportPrivateKeyBase64())
+                    );
                 }
             )
             .WithDescription("Generate a new key pair")

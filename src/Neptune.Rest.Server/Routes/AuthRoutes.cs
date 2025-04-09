@@ -1,7 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using FluentValidation;
+using Neptune.Rest.Server.Extensions;
 using Neptune.Rest.Server.Interfaces;
 using Neptune.Server.Core.Data.Rest;
+using Neptune.Server.Core.Data.Rest.Base;
 using SharpGrip.FluentValidation.AutoValidation.Endpoints.Extensions;
 
 namespace Neptune.Rest.Server.Routes;
@@ -19,7 +21,12 @@ public static class AuthRoutes
             {
                 var result = await loginService.LoginAsync(request);
 
-                return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+                if (result.IsSuccess)
+                {
+                    return RestResultObject<LoginResponseObject>.CreateSuccess(result).ToResult();
+                }
+
+                return RestResultObject<LoginResponseObject>.CreateError(result.Message).ToResult();
             }
         );
 
@@ -31,7 +38,12 @@ public static class AuthRoutes
                 {
                     var result = await loginService.RegisterAsync(request);
 
-                    return result.IsSuccess ? Results.Ok(result) : Results.BadRequest(result);
+                    if (result.IsSuccess)
+                    {
+                        return RestResultObject<RegisterResponseObject>.CreateSuccess(result).ToResult();
+                    }
+
+                    return RestResultObject<RegisterResponseObject>.CreateError(result.Message).ToResult();
                 }
             )
             .AddFluentValidationAutoValidation();
