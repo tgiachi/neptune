@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <LangVersion>14</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Neptune.Packets\Neptune.Packets.csproj" />
+      <ProjectReference Include="..\Neptune.Server.Core\Neptune.Server.Core.csproj" />
+    </ItemGroup>
+
+</Project>

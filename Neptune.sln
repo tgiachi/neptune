@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neptune.Database.Core", "sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neptune.Server.Core", "src\Neptune.Server.Core\Neptune.Server.Core.csproj", "{80A472D6-2863-4760-9CBD-BB50D97CABFB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neptune.Transport.Core", "src\Neptune.Transport.Core\Neptune.Transport.Core.csproj", "{77768264-18DA-4A19-93B5-5CFF60D6C5C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neptune.Udp.Transport", "src\Neptune.Udp.Transport\Neptune.Udp.Transport.csproj", "{00D447E2-C96A-4547-BBF6-2CD4642560CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +52,13 @@ Global
 		{80A472D6-2863-4760-9CBD-BB50D97CABFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80A472D6-2863-4760-9CBD-BB50D97CABFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{80A472D6-2863-4760-9CBD-BB50D97CABFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77768264-18DA-4A19-93B5-5CFF60D6C5C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77768264-18DA-4A19-93B5-5CFF60D6C5C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77768264-18DA-4A19-93B5-5CFF60D6C5C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77768264-18DA-4A19-93B5-5CFF60D6C5C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00D447E2-C96A-4547-BBF6-2CD4642560CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00D447E2-C96A-4547-BBF6-2CD4642560CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00D447E2-C96A-4547-BBF6-2CD4642560CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00D447E2-C96A-4547-BBF6-2CD4642560CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
